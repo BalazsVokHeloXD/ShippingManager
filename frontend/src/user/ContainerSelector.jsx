@@ -18,7 +18,6 @@ export default function ContainerSelector({
   const containerSizes = ['small', 'medium', 'large'];
 
   useEffect(() => {
-    // Fetch container types for the filter dropdown
     fetch('/api/rs/container-types')
       .then(res => res.json())
       .then(data => setTypeOptions(data))

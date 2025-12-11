@@ -1,4 +1,3 @@
-// RouteSelector.jsx
 import React, { useState, useEffect } from 'react';
 import RouteRow from './RouteRow';
 
@@ -29,7 +28,6 @@ export default function RouteSelector({ filters, setFilters, options, setSelecte
   const [loadingRoutes, setLoadingRoutes] = useState(false);
   const [error, setError] = useState(null);
 
-  // Filter countries and harbors based on selected continent and country
   const filteredDepCountries = filters.depContinent
     ? options.countries.filter(c => c.continent === filters.depContinent)
     : options.countries;
