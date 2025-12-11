@@ -17,7 +17,7 @@ function ReservationFilterResult({ item, selected, onSelect }) {
   );
 }
 
-function ReservationItem({ item, onCallback }) {
+function ReservationItem({ item, onCallback, onDelete }) {
   if (!item) return <div className="no-selection">Select a reservation to view details</div>;
 
   return (
@@ -26,9 +26,13 @@ function ReservationItem({ item, onCallback }) {
         <h3>Reservation #{item.reservationId}</h3>
         <button
           className="transparent-bottom-border-button callback-btn"
-          onClick={() => onCallback(item.reservationId)}
-        >
+          onClick={() => onCallback(item.reservationId)}>
           Trigger Callback
+        </button>
+        <button
+          className="transparent-bottom-border-button delete-btn"
+          onClick={() => onDelete(item.reservationId)}>
+          Delete Reservation
         </button>
       </div>
 
@@ -118,6 +122,32 @@ function AdminReservation({ adminUsername, role }) {
     }
   };
 
+  const handleDelete = async (reservationId) => {
+    try {
+      const confirmed = window.confirm(`Delete reservation #${reservationId}? This cannot be undone.`);
+      if (!confirmed) return;
+
+      const res = await fetch(`/api/as/reservations/${reservationId}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        alert(`Delete failed: ${err.message || res.statusText}`);
+        return;
+      }
+
+      const data = await res.json();
+      alert(data.message || 'Reservation deleted');
+
+      setResults((prev) => prev.filter((r) => r.reservationId !== reservationId));
+      setSelected(null);
+    } catch (err) {
+      console.error(err);
+      alert('Delete failed. Check console for details.');
+    }
+  };
+
   return (
     <div>
       <Header username={adminUsername} onLogout={() => setReservationId("")} role={role} />
@@ -161,7 +191,7 @@ function AdminReservation({ adminUsername, role }) {
         </div>
 
         <div id="reservationDetails">
-          <ReservationItem item={selected} onCallback={handleCallback} />
+          <ReservationItem item={selected} onCallback={handleCallback} onDelete={handleDelete} />
         </div>
       </div>
     </div>
