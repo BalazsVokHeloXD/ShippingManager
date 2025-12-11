@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-deployment
+  namespace: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-worker
+  template:
+    metadata:
+      labels:
+        app: consumer-worker
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: consumer-worker
+          image: ghcr.io/balazsvokheloxd/shippingmanager-consumerservice:latest
+          env:
+            - name: DB_HOST
+              value: "mysql.database.svc.cluster.local"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-user
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-password
+            - name: DB_NAME
+              value: "sm"
+            - name: RABBITMQ_URL
+              value: "amqp://rabbituser:rabbitpassword@rabbitmq:5672"
+            - name: BARION_POSKEY
+              valueFrom:
+                secretKeyRef:
+                  name: barion-credentials
+                  key: BARION_POSKEY
+            - name: BARION_PAYEE
+              valueFrom:
+                secretKeyRef:
+                  name: barion-credentials
+                  key: BARION_PAYEE
+            - name: PUBLIC_URL
+              valueFrom:
+                secretKeyRef:
+                  name: barion-credentials
+                  key: PUBLIC_URL
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - consumer-worker
+                topologyKey: "kubernetes.io/hostname"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consumer-worker
+  namespace: backend
+spec:
+  selector:
+    app: consumer-worker
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cw-hpa
+  namespace: backend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: consumer-deployment
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
