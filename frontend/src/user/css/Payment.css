@@ -1,0 +1,29 @@
+#paymentBody{
+    background-color: var(--form-bg);
+    width: 50%;
+    margin: auto;
+    border-bottom: 2px solid black;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#paymentBody h1{
+    text-align: center;
+    margin: 0;
+}
+
+#paymentBody .display-flex-row{
+    width: 50%;
+    margin: auto;
+}
+
+#paymentBody label{
+    text-align: right;
+    margin: auto;
+}
+
+#buttonHolder{
+    margin: auto;
+}

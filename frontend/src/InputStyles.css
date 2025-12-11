@@ -1,0 +1,8 @@
+.white-bottom-border-input{
+    background-color: #ffffff;
+    border: 0;
+    border-bottom: 2px solid black;
+    margin: 5px;
+    font-size: 2vh;
+    width: 50%;
+}

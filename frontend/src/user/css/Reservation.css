@@ -1,0 +1,176 @@
+#reservationPage{
+    background-color: var(--form-bg);
+    width: 90%;
+    margin: auto;
+}
+
+#filterSection, #containerFilter{
+   width: 80%;
+   margin: auto;
+}
+
+.route-row{
+    border-bottom: 1px solid black;
+    height: 3vh;
+    background-color: var(--item-bg);
+}
+
+.route-row.selected {
+  background-color: var(--selected-item);
+  border-bottom: 5px solid #00acc1;
+}
+
+.route-row:hover {
+  background-color: #f1f3f5;
+  cursor: pointer;
+}
+
+#route-list{
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+#filterSection .display-flex-row{
+  justify-content: space-evenly;
+}
+
+#filterSection select, #filterSection label{
+  width: 20%;
+}
+
+ #filterSection label{
+  text-align: right;
+  font-weight: bold;
+  font-size: 2vh;
+  margin-top: auto;
+  margin-bottom: auto;
+ }
+
+#containerSelectorBody .route-row, #summaryBody .route-row{
+  pointer-events: none;
+}
+
+#containerList{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: .5vh;
+  align-items: center;
+}
+
+ .containerItem{
+  width: 90%;
+  border-bottom: 1px solid black;
+  height: 3vh;
+ }
+
+ .containerItem input{
+  width: 4vh;
+  border: 0;
+  background-color: transparent;
+ }
+
+ .containerItem label{
+  font-size: 2vh;
+  text-align: center;
+  margin: auto;
+ }
+
+ .containerItem:hover{
+  background-color: var(--selected-item);
+ }
+
+ #containerFilter{
+    width: 50%;
+ }
+
+#containerFilter label{
+  width: 20%;
+  text-align: right;
+  font-size: 2.5vh;
+  font-weight: bold;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+#containerFilter select{
+  width: 50%;
+}
+
+.selected-container {
+  background-color: #e0f3ff;
+  border-color: #007acc;
+}
+
+.summary-container{
+  pointer-events: none;
+}
+
+.col1{
+    width: 10%;
+    margin: auto;
+    text-align: center;
+}
+
+.col2, .col3{
+    width: 30%;
+    justify-content: space-between;
+}
+
+.col4{
+    width: 15%;
+    margin: auto;
+}
+
+.col5{
+    width: 5%;
+    margin: auto;
+    text-align: right;
+}
+
+.col6{
+    margin: auto;
+}
+
+.img-container{
+    width: 20%;
+}
+
+.img-container img{
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.harborname-container{
+    width: 50%;
+    margin: auto;
+    margin-left: 5px;
+}
+
+.date-container{
+    width: 40%;
+    margin: auto;
+}
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1em;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.5em;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

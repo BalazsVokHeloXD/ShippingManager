@@ -1,0 +1,14 @@
+body{
+  margin: 0;
+}
+
+.display-flex-row{
+    display: flex;
+    flex-direction: row;
+}
+
+.dividerLine{
+    border: 1px solid #999999;
+    width: 90%;
+    margin: auto;
+}

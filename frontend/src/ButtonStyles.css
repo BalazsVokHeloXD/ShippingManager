@@ -1,0 +1,11 @@
+.transparent-bottom-border-button{
+    width: 10vw;
+    background-color: transparent;
+    border: 0;
+    border-bottom: 2px solid black;
+    transition: background-color 0.2s;
+}
+
+.transparent-bottom-border-button:hover{
+    background-color: #cecece;
+}

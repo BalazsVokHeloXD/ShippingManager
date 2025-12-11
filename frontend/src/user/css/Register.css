@@ -1,0 +1,47 @@
+#registerDiv{
+    width: 50%;
+    height: 50vh;
+    margin: auto;
+    background-color: var(--form-bg);
+    text-align: center;
+    border-bottom: 2px solid black;
+}
+
+#registerDiv input, label{
+    width: 45%;
+}
+
+#registerDiv label{
+    text-align: right;
+}
+
+#reg-upper-third
+{
+    display: flex;
+    flex-direction: column;
+}
+
+#reg-middle-third input{
+    text-align: center;
+}
+
+#reg-bottom-third input{
+    width: 95%;
+    text-align: center;
+}
+
+#footerDiv{
+    margin-top: 3vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2vh;
+}
+
+#footerDiv button{
+    width: 50%;
+    height: 3vh;
+    font-size: 2vh;
+    font-weight: bold;
+}
