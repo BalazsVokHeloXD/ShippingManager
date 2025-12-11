@@ -152,4 +152,68 @@ router.post("/reservation/callback", async (req, res) => {
   }
 });
 
+router.delete('/reservations/:id', async (req, res) => {
+  const reservationId = req.params.id;
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const [[reservation]] = await conn.query(
+      `
+      SELECT r.id, r.route_id, ro.departure_time, ro.departure_harbor
+      FROM reservation r
+      JOIN route ro ON r.route_id = ro.id
+      WHERE r.id = ?
+      `,
+      [reservationId]
+    );
+
+    if (!reservation) {
+      await conn.rollback();
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    const departureTime = reservation.departure_time ? new Date(reservation.departure_time) : null;
+    if (departureTime && departureTime <= new Date()) {
+      await conn.rollback();
+      return res.status(400).json({ message: "Cannot delete reservation: route has already started" });
+    }
+
+    const [paymentRows] = await conn.query(`SELECT status FROM payment WHERE id = ? LIMIT 1`, [reservationId]);
+    if (paymentRows.length > 0 && paymentRows[0].status === 'Settled') {
+      await conn.rollback();
+      return res.status(400).json({ message: "Cannot delete reservation: payment already completed" });
+    }
+
+    const [containerRows] = await conn.query(`SELECT container_id FROM reservation_container WHERE reservation_id = ?`, [reservationId]);
+    const containerIds = containerRows.map(r => r.container_id);
+
+    if (containerIds.length > 0) {
+      await conn.query(
+        `
+        UPDATE container
+        SET harbor_id = ?
+        WHERE id IN (${containerIds.map(() => '?').join(',')})
+        `,
+        [reservation.departure_harbor, ...containerIds]
+      );
+    }
+
+    await conn.query(`DELETE FROM payment WHERE id = ?`, [reservationId]);
+    await conn.query(`DELETE FROM reservation_container WHERE reservation_id = ?`, [reservationId]);
+    await conn.query(`DELETE FROM reservation_status WHERE reservation_id = ?`, [reservationId]);
+    await conn.query(`DELETE FROM reservation WHERE id = ?`, [reservationId]);
+
+    await conn.commit();
+    res.json({ message: 'Reservation deleted and containers reverted' });
+  } catch (err) {
+    await conn.rollback();
+    console.error('Admin delete reservation error:', err.message || err);
+    res.status(500).json({ message: 'Failed to delete reservation' });
+  } finally {
+    conn.release();
+  }
+});
+
 module.exports = router;
